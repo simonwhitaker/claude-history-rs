@@ -1,6 +1,6 @@
 use std::cmp::Reverse;
 use std::fs::File;
-use std::io::{self, BufRead, BufReader, Write};
+use std::io::{self, BufRead, BufReader, IsTerminal, Write};
 use std::path::{Path, PathBuf};
 use std::process;
 
@@ -14,6 +14,11 @@ const SESSION_LIMIT: usize = 10;
 const BASH_STDOUT_PREFIX: &str = "<bash-stdout>";
 const BASH_INPUT_PREFIX: &str = "<bash-input>";
 const BASH_INPUT_SUFFIX: &str = "</bash-input>";
+const ANSI_RESET: &str = "\x1b[0m";
+const ANSI_BOLD_BLUE: &str = "\x1b[1;34m";
+const ANSI_BOLD_GREEN: &str = "\x1b[1;32m";
+const ANSI_BOLD_YELLOW: &str = "\x1b[1;33m";
+const ANSI_DIM: &str = "\x1b[2m";
 
 #[derive(Debug, Parser)]
 #[command(about = "Get the history of conversations with Claude Code.")]
@@ -153,6 +158,7 @@ fn choose_session(sessions: &[SessionSummary]) -> Result<SessionSummary> {
 
 fn print_session(path: &Path, include_bash_output: bool) -> Result<()> {
     let reader = open_jsonl(path)?;
+    let use_color = stdout_supports_color();
 
     for line in reader.lines() {
         let line = line.with_context(|| format!("failed to read {}", path.display()))?;
@@ -189,11 +195,11 @@ fn print_session(path: &Path, include_bash_output: bool) -> Result<()> {
             .and_then(Value::as_str)
             .unwrap_or("unknown");
 
-        println!("{}", format_speaker_heading(role, timestamp));
+        println!("{}", format_speaker_heading(role, timestamp, use_color));
         println!();
 
         if role == "user" {
-            println!("{}", quote_markdown(&content));
+            println!("{}", quote_markdown(&content, use_color));
         } else {
             println!("{content}");
         }
@@ -254,16 +260,31 @@ fn collapse_newlines(text: &str) -> String {
     result
 }
 
-fn format_speaker_heading(role: &str, timestamp: &str) -> String {
+fn stdout_supports_color() -> bool {
+    io::stdout().is_terminal()
+        && std::env::var_os("NO_COLOR").is_none()
+        && std::env::var("TERM").unwrap_or_default() != "dumb"
+}
+
+fn format_speaker_heading(role: &str, timestamp: &str, use_color: bool) -> String {
     let label = match role {
         "user" => "User",
         "assistant" => "Assistant",
         _ => role,
     };
+    let heading = format!("**{label}**");
+    let heading = if use_color {
+        colorize_heading(role, &heading)
+    } else {
+        heading
+    };
 
     match format_timestamp(timestamp) {
-        Some(time) => format!("**{label}** _({time})_"),
-        None => format!("**{label}**"),
+        Some(time) if use_color => {
+            format!("{heading} {ANSI_DIM}_({time})_{ANSI_RESET}")
+        }
+        Some(time) => format!("{heading} _({time})_"),
+        None => heading,
     }
 }
 
@@ -273,8 +294,28 @@ fn format_timestamp(timestamp: &str) -> Option<String> {
         .map(|parsed| parsed.with_timezone(&Local).format("%H:%M").to_string())
 }
 
-fn quote_markdown(text: &str) -> String {
+fn colorize_heading(role: &str, heading: &str) -> String {
+    let color = match role {
+        "user" => ANSI_BOLD_BLUE,
+        "assistant" => ANSI_BOLD_GREEN,
+        _ => ANSI_BOLD_YELLOW,
+    };
+
+    format!("{color}{heading}{ANSI_RESET}")
+}
+
+fn quote_markdown(text: &str, use_color: bool) -> String {
     let mut quoted = String::new();
+    let quote_prefix = if use_color {
+        format!("{ANSI_DIM}> {ANSI_RESET}")
+    } else {
+        String::from("> ")
+    };
+    let blank_quote_prefix = if use_color {
+        format!("{ANSI_DIM}>{ANSI_RESET}")
+    } else {
+        String::from(">")
+    };
 
     for (index, line) in text.lines().enumerate() {
         if index > 0 {
@@ -282,15 +323,15 @@ fn quote_markdown(text: &str) -> String {
         }
 
         if line.is_empty() {
-            quoted.push('>');
+            quoted.push_str(&blank_quote_prefix);
         } else {
-            quoted.push_str("> ");
+            quoted.push_str(&quote_prefix);
             quoted.push_str(line);
         }
     }
 
     if quoted.is_empty() {
-        quoted.push('>');
+        quoted.push_str(&blank_quote_prefix);
     }
 
     quoted
@@ -299,8 +340,8 @@ fn quote_markdown(text: &str) -> String {
 #[cfg(test)]
 mod tests {
     use super::{
-        collapse_newlines, format_speaker_heading, format_timestamp, is_message, message_content,
-        quote_markdown,
+        ANSI_BOLD_BLUE, ANSI_DIM, ANSI_RESET, collapse_newlines, format_speaker_heading,
+        format_timestamp, is_message, message_content, quote_markdown,
     };
     use serde_json::json;
 
@@ -370,11 +411,30 @@ mod tests {
 
     #[test]
     fn omits_timestamp_when_it_cannot_be_parsed() {
-        assert_eq!(format_speaker_heading("user", "unknown"), "**User**");
+        assert_eq!(format_speaker_heading("user", "unknown", false), "**User**");
     }
 
     #[test]
     fn quotes_each_user_line_for_markdown() {
-        assert_eq!(quote_markdown("first\n\nsecond"), "> first\n>\n> second");
+        assert_eq!(
+            quote_markdown("first\n\nsecond", false),
+            "> first\n>\n> second"
+        );
+    }
+
+    #[test]
+    fn colors_speaker_heading_for_tty_output() {
+        assert_eq!(
+            format_speaker_heading("user", "2026-03-19T10:23:45+00:00", true),
+            format!("{ANSI_BOLD_BLUE}**User**{ANSI_RESET} {ANSI_DIM}_(10:23)_{ANSI_RESET}")
+        );
+    }
+
+    #[test]
+    fn colors_quote_markers_for_tty_output() {
+        assert_eq!(
+            quote_markdown("first\n", true),
+            format!("{ANSI_DIM}> {ANSI_RESET}first")
+        );
     }
 }
