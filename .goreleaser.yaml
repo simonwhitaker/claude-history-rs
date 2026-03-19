@@ -1,0 +1,39 @@
+version: 2
+
+project_name: claude-history
+
+before:
+  hooks:
+    - cargo fetch --locked
+
+builds:
+  - id: claude-history
+    builder: rust
+    binary: claude-history
+    command: build
+    tool: cargo-zigbuild
+    targets:
+      - x86_64-unknown-linux-gnu
+      - aarch64-unknown-linux-gnu
+      - x86_64-pc-windows-gnu
+
+archives:
+  - ids:
+      - claude-history
+    formats:
+      - tar.gz
+    format_overrides:
+      - goos: windows
+        formats:
+          - zip
+    files:
+      - README.md
+
+checksum:
+  name_template: checksums.txt
+
+changelog:
+  disable: true
+
+source:
+  enabled: false
