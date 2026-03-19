@@ -111,11 +111,11 @@ fn session_summary(path: &Path) -> Result<SessionSummary> {
         let data: Value = serde_json::from_str(&line)
             .with_context(|| format!("failed to parse JSON in {}", path.display()))?;
 
-        if is_message(&data) {
-            if let Some(content) = message_content(&data) {
-                first_prompt = collapse_newlines(content.trim());
-                break;
-            }
+        if is_message(&data)
+            && let Some(content) = message_content(&data)
+        {
+            first_prompt = collapse_newlines(content.trim());
+            break;
         }
     }
 
