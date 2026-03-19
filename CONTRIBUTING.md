@@ -14,7 +14,7 @@ Then run `claude-history` from the same directory where you previously ran `clau
 
 This repository uses `release-plz` from GitHub Actions.
 
-`release-plz` owns versioning, changelogs, crates.io publishing, tags, and GitHub releases. A separate GoReleaser workflow runs after a GitHub release is published and uploads binary artifacts for Linux, macOS, and Windows to that existing release.
+`release-plz` owns versioning, changelogs, crates.io publishing, tags, and GitHub releases. A separate GoReleaser workflow runs after a GitHub release is published and uploads binary artifacts for Linux and macOS to that existing release.
 
 To enable automated releases in GitHub:
 
