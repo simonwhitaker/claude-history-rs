@@ -43,7 +43,7 @@ source:
 homebrew_casks:
   - name: claude-history
     directory: Casks
-    homepage: https://github.com/simonwhitaker/claude-history-rs
+    homepage: https://github.com/simonwhitaker/claude-code-history
     repository:
       owner: simonwhitaker
       name: homebrew-tap

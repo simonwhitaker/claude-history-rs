@@ -6,7 +6,7 @@ The format is based on Keep a Changelog, and this project adheres to Semantic Ve
 
 ## [Unreleased]
 
-## [0.1.2](https://github.com/simonwhitaker/claude-history-rs/compare/v0.1.1...v0.1.2) - 2026-03-19
+## [0.1.2](https://github.com/simonwhitaker/claude-code-history/compare/v0.1.1...v0.1.2) - 2026-03-19
 
 ### Added
 
@@ -19,7 +19,7 @@ The format is based on Keep a Changelog, and this project adheres to Semantic Ve
 - add goreleaser release artifacts
 - restore normal release-plz behavior
 
-## [0.1.1](https://github.com/simonwhitaker/claude-history-rs/compare/v0.1.0...v0.1.1) - 2026-03-19
+## [0.1.1](https://github.com/simonwhitaker/claude-code-history/compare/v0.1.0...v0.1.1) - 2026-03-19
 
 ### Other
 

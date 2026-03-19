@@ -5,7 +5,7 @@ edition = "2024"
 description = "Print the most recent Claude Code session for the current directory."
 license = "MIT"
 readme = "README.md"
-repository = "https://github.com/simonwhitaker/claude-history-rs"
+repository = "https://github.com/simonwhitaker/claude-code-history"
 
 [[bin]]
 name = "claude-history"
