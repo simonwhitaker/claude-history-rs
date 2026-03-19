@@ -8,7 +8,7 @@ on:
 jobs:
   goreleaser:
     name: Build release artifacts
-    runs-on: ubuntu-latest
+    runs-on: macos-latest
     if: ${{ github.repository_owner == 'simonwhitaker' }}
     permissions:
       contents: write
