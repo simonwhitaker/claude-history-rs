@@ -6,6 +6,12 @@ The format is based on Keep a Changelog, and this project adheres to Semantic Ve
 
 ## [Unreleased]
 
+## [0.1.4](https://github.com/simonwhitaker/claude-code-history/compare/v0.1.3...v0.1.4) - 2026-03-19
+
+### Fixed
+
+- build release artifacts on macos ([#5](https://github.com/simonwhitaker/claude-code-history/pull/5))
+
 ## [0.1.3](https://github.com/simonwhitaker/claude-code-history/compare/v0.1.2...v0.1.3) - 2026-03-19
 
 ### Other
