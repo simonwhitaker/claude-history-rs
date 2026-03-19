@@ -33,6 +33,17 @@ jobs:
       - name: Install cargo-zigbuild
         run: cargo install --locked cargo-zigbuild
 
+      - name: Create GitHub App token
+        uses: actions/create-github-app-token@v2
+        id: github-app-token
+        with:
+          app-id: ${{ vars.RELEASE_APP_ID }}
+          private-key: ${{ secrets.RELEASE_APP_PRIVATE_KEY }}
+          owner: ${{ github.repository_owner }}
+          repositories: |
+            claude-history-rs
+            homebrew-tap
+
       - name: Run GoReleaser
         uses: goreleaser/goreleaser-action@v7.0.0
         with:
@@ -40,4 +51,4 @@ jobs:
           version: v2.14.3
           args: release --clean
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ steps.github-app-token.outputs.token }}

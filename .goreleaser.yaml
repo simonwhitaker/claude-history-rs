@@ -37,3 +37,20 @@ changelog:
 
 source:
   enabled: false
+
+homebrew_casks:
+  - name: claude-history
+    directory: Casks
+    homepage: https://github.com/simonwhitaker/claude-history-rs
+    repository:
+      owner: simonwhitaker
+      name: homebrew-tap
+    commit_author:
+      name: Simon Whitaker
+      email: sw@netcetera.org
+    hooks:
+      post:
+        install: |
+          if OS.mac?
+            system_command "/usr/bin/xattr", args: ["-dr", "com.apple.quarantine", "#{staged_path}/claude-history"]
+          end
