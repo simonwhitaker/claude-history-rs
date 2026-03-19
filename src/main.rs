@@ -189,8 +189,16 @@ fn print_session(path: &Path, include_bash_output: bool) -> Result<()> {
             .and_then(Value::as_str)
             .unwrap_or("unknown");
 
-        println!("---[ {role}, {timestamp} ]-------------------------------\n");
-        println!("{content}\n");
+        println!("{}", format_speaker_heading(role, timestamp));
+        println!();
+
+        if role == "user" {
+            println!("{}", quote_markdown(&content));
+        } else {
+            println!("{content}");
+        }
+
+        println!();
     }
 
     Ok(())
@@ -246,9 +254,54 @@ fn collapse_newlines(text: &str) -> String {
     result
 }
 
+fn format_speaker_heading(role: &str, timestamp: &str) -> String {
+    let label = match role {
+        "user" => "User",
+        "assistant" => "Assistant",
+        _ => role,
+    };
+
+    match format_timestamp(timestamp) {
+        Some(time) => format!("**{label}** _({time})_"),
+        None => format!("**{label}**"),
+    }
+}
+
+fn format_timestamp(timestamp: &str) -> Option<String> {
+    DateTime::parse_from_rfc3339(timestamp)
+        .ok()
+        .map(|parsed| parsed.with_timezone(&Local).format("%H:%M").to_string())
+}
+
+fn quote_markdown(text: &str) -> String {
+    let mut quoted = String::new();
+
+    for (index, line) in text.lines().enumerate() {
+        if index > 0 {
+            quoted.push('\n');
+        }
+
+        if line.is_empty() {
+            quoted.push('>');
+        } else {
+            quoted.push_str("> ");
+            quoted.push_str(line);
+        }
+    }
+
+    if quoted.is_empty() {
+        quoted.push('>');
+    }
+
+    quoted
+}
+
 #[cfg(test)]
 mod tests {
-    use super::{collapse_newlines, is_message, message_content};
+    use super::{
+        collapse_newlines, format_speaker_heading, format_timestamp, is_message, message_content,
+        quote_markdown,
+    };
     use serde_json::json;
 
     #[test]
@@ -305,5 +358,23 @@ mod tests {
     #[test]
     fn collapses_newlines_like_python_version() {
         assert_eq!(collapse_newlines("a\n  b\n\nc"), r"a\nb\nc");
+    }
+
+    #[test]
+    fn formats_rfc3339_timestamp_as_compact_time() {
+        assert_eq!(
+            format_timestamp("2026-03-19T10:23:45+00:00"),
+            Some("10:23".to_string())
+        );
+    }
+
+    #[test]
+    fn omits_timestamp_when_it_cannot_be_parsed() {
+        assert_eq!(format_speaker_heading("user", "unknown"), "**User**");
+    }
+
+    #[test]
+    fn quotes_each_user_line_for_markdown() {
+        assert_eq!(quote_markdown("first\n\nsecond"), "> first\n>\n> second");
     }
 }
