@@ -5,8 +5,10 @@ Get a transcript of your last Claude Code session, ready to include in your comm
 ## Installation
 
 ```command
-cargo install --path .
+cargo install claude-code-history
 ```
+
+For local development, use `cargo install --path .`.
 
 Then run `claude-history` from the same directory where you previously ran `claude`.
 

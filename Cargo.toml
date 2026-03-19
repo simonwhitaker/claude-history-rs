@@ -1,11 +1,15 @@
 [package]
-name = "claude-history"
+name = "claude-code-history"
 version = "0.1.0"
 edition = "2024"
 description = "Print the most recent Claude Code session for the current directory."
 license = "MIT"
 readme = "README.md"
 repository = "https://github.com/simonwhitaker/claude-history-rs"
+
+[[bin]]
+name = "claude-history"
+path = "src/main.rs"
 
 [dependencies]
 anyhow = "1.0.100"
