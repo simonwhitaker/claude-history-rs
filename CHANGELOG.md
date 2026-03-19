@@ -6,6 +6,16 @@ The format is based on Keep a Changelog, and this project adheres to Semantic Ve
 
 ## [Unreleased]
 
+## [0.1.3](https://github.com/simonwhitaker/claude-code-history/compare/v0.1.2...v0.1.3) - 2026-03-19
+
+### Other
+
+- remove unneeded key from release-plz workflow
+- move release notes to contributing guide
+- update repo references after rename
+- use github app token for release-plz
+- add macos release artifacts
+
 ## [0.1.2](https://github.com/simonwhitaker/claude-code-history/compare/v0.1.1...v0.1.2) - 2026-03-19
 
 ### Added
