@@ -26,6 +26,9 @@ struct Cli {
     #[arg(short = 'b', long = "include-bash-output")]
     include_bash_output: bool,
 
+    #[arg(short = 'l', long = "list")]
+    list: bool,
+
     #[arg(short = 's', long = "choose-session")]
     choose_session: bool,
 }
@@ -56,6 +59,10 @@ fn run() -> Result<()> {
     let mut sessions = collect_sessions(&project_dir)?;
     if sessions.is_empty() {
         bail!("No session files found in the Claude project directory.");
+    }
+
+    if cli.list {
+        return print_session_list(&sessions);
     }
 
     let session = if cli.choose_session {
@@ -154,6 +161,22 @@ fn choose_session(sessions: &[SessionSummary]) -> Result<SessionSummary> {
         Some(index) => Ok(sessions[index].clone()),
         None => process::exit(0),
     }
+}
+
+fn print_session_list(sessions: &[SessionSummary]) -> Result<()> {
+    let use_color = stdout_supports_color();
+    for session in sessions {
+        let timestamp = session.modified_at.format("%Y-%m-%d %H:%M:%S");
+        if use_color {
+            println!(
+                "{ANSI_DIM}{timestamp}{ANSI_RESET}  {}",
+                session.first_prompt
+            );
+        } else {
+            println!("{timestamp}  {}", session.first_prompt);
+        }
+    }
+    Ok(())
 }
 
 fn print_session(path: &Path, include_bash_output: bool) -> Result<()> {
