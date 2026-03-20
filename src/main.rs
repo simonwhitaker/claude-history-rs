@@ -222,12 +222,11 @@ fn message_content(data: &Value) -> Option<&str> {
         return Some(text);
     }
 
-    content
-        .as_array()?
-        .first()?
-        .as_object()?
-        .get("text")?
-        .as_str()
+    content.as_array()?.iter().find_map(|item| {
+        item.as_object()?
+            .get("text")
+            .and_then(Value::as_str)
+    })
 }
 
 fn is_message(data: &Value) -> bool {
@@ -363,6 +362,20 @@ mod tests {
                 "content": [
                     {"text": "hello"},
                     {"text": "ignored"}
+                ]
+            }
+        });
+
+        assert_eq!(message_content(&value), Some("hello"));
+    }
+
+    #[test]
+    fn extracts_text_when_array_starts_with_non_text_item() {
+        let value = json!({
+            "message": {
+                "content": [
+                    {"type": "tool_use", "name": "shell"},
+                    {"text": "hello"}
                 ]
             }
         });
