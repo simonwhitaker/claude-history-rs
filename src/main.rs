@@ -16,7 +16,7 @@ const BASH_INPUT_PREFIX: &str = "<bash-input>";
 const BASH_INPUT_SUFFIX: &str = "</bash-input>";
 const ANSI_RESET: &str = "\x1b[0m";
 const ANSI_BOLD_BLUE: &str = "\x1b[1;34m";
-const ANSI_BOLD_GREEN: &str = "\x1b[1;32m";
+const ANSI_BOLD_CYAN: &str = "\x1b[1;36m";
 const ANSI_BOLD_YELLOW: &str = "\x1b[1;33m";
 const ANSI_DIM: &str = "\x1b[2m";
 
