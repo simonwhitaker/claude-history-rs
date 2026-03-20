@@ -1,6 +1,6 @@
 [package]
 name = "claude-code-history"
-version = "0.1.6"
+version = "0.1.7"
 edition = "2024"
 description = "Print the most recent Claude Code session for the current directory."
 license = "MIT"
