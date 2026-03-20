@@ -222,11 +222,10 @@ fn message_content(data: &Value) -> Option<&str> {
         return Some(text);
     }
 
-    content.as_array()?.iter().find_map(|item| {
-        item.as_object()?
-            .get("text")
-            .and_then(Value::as_str)
-    })
+    content
+        .as_array()?
+        .iter()
+        .find_map(|item| item.as_object()?.get("text").and_then(Value::as_str))
 }
 
 fn is_message(data: &Value) -> bool {
