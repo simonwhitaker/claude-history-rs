@@ -6,6 +6,13 @@ The format is based on Keep a Changelog, and this project adheres to Semantic Ve
 
 ## [Unreleased]
 
+## [0.1.7](https://github.com/simonwhitaker/claude-code-history/compare/v0.1.6...v0.1.7) - 2026-03-20
+
+### Other
+
+- use cyan, again ([#17](https://github.com/simonwhitaker/claude-code-history/pull/17))
+- Use cyan instead of green ([#15](https://github.com/simonwhitaker/claude-code-history/pull/15))
+
 ## [0.1.6](https://github.com/simonwhitaker/claude-code-history/compare/v0.1.5...v0.1.6) - 2026-03-20
 
 ### Added
