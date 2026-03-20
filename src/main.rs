@@ -21,7 +21,11 @@ const ANSI_BOLD_YELLOW: &str = "\x1b[1;33m";
 const ANSI_DIM: &str = "\x1b[2m";
 
 #[derive(Debug, Parser)]
-#[command(about = "Get the history of conversations with Claude Code.")]
+#[command(
+    name = "claude-history",
+    version,
+    about = "Get the history of conversations with Claude Code."
+)]
 struct Cli {
     #[arg(short = 'b', long = "include-bash-output")]
     include_bash_output: bool,
@@ -361,9 +365,10 @@ fn quote_markdown(text: &str, use_color: bool) -> String {
 #[cfg(test)]
 mod tests {
     use super::{
-        ANSI_BOLD_BLUE, ANSI_DIM, ANSI_RESET, collapse_newlines, format_speaker_heading,
+        ANSI_BOLD_BLUE, ANSI_DIM, ANSI_RESET, Cli, collapse_newlines, format_speaker_heading,
         format_timestamp, is_message, message_content, quote_markdown,
     };
+    use clap::{Parser, error::ErrorKind};
     use serde_json::json;
 
     #[test]
@@ -471,5 +476,12 @@ mod tests {
             quote_markdown("first\n", true),
             format!("{ANSI_DIM}> {ANSI_RESET}first")
         );
+    }
+
+    #[test]
+    fn supports_version_flag() {
+        let error = Cli::try_parse_from(["claude-history", "--version"]).unwrap_err();
+
+        assert_eq!(error.kind(), ErrorKind::DisplayVersion);
     }
 }
