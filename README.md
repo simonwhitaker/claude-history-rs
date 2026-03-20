@@ -4,6 +4,14 @@ Get a transcript of your last Claude Code session, ready to include in your comm
 
 ## Installation
 
+With Homebrew:
+
+```command
+brew install simonwhitaker/tap/claude-history
+```
+
+With Cargo:
+
 ```command
 cargo install claude-code-history
 ```
