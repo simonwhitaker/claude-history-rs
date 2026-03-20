@@ -322,7 +322,7 @@ fn format_timestamp(timestamp: &str) -> Option<String> {
 fn colorize_heading(role: &str, heading: &str) -> String {
     let color = match role {
         "user" => ANSI_BOLD_BLUE,
-        "assistant" => ANSI_BOLD_GREEN,
+        "assistant" => ANSI_BOLD_CYAN,
         _ => ANSI_BOLD_YELLOW,
     };
 
