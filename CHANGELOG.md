@@ -6,6 +6,22 @@ The format is based on Keep a Changelog, and this project adheres to Semantic Ve
 
 ## [Unreleased]
 
+## [0.1.5](https://github.com/simonwhitaker/claude-code-history/compare/v0.1.4...v0.1.5) - 2026-03-20
+
+### Added
+
+- add --list flag to show recent sessions at a glance ([#11](https://github.com/simonwhitaker/claude-code-history/pull/11))
+
+### Fixed
+
+- handle non-text message content items ([#9](https://github.com/simonwhitaker/claude-code-history/pull/9))
+
+### Other
+
+- add Homebrew install instructions ([#12](https://github.com/simonwhitaker/claude-code-history/pull/12))
+- document squash-merge PR title rule ([#10](https://github.com/simonwhitaker/claude-code-history/pull/10))
+- remove user-specific advice from AGENTS.md ([#7](https://github.com/simonwhitaker/claude-code-history/pull/7))
+
 ## [0.1.4](https://github.com/simonwhitaker/claude-code-history/compare/v0.1.3...v0.1.4) - 2026-03-19
 
 ### Fixed
